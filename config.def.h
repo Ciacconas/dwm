@@ -23,7 +23,7 @@ static char white[]					= "#ffffff";
 static char selcolor[]           	= "#005577";
 static char *colors[][3] = {
        /*               fg          bg          border   */
-    [SchemeNorm] = 		{ white, 	black,  	black },
+    [SchemeNorm] = 		{ white, 	black,  	gray },
     [SchemeSel]  = 		{ white,  	selcolor,  	selcolor  },
 	[SchemeInactive] = 	{ white, 	gray, 		NULL },
 };
