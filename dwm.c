@@ -1500,7 +1500,8 @@ loadxrdb()
       xrdb = XrmGetStringDatabase(resm);
 
       if (xrdb != NULL) {
-        XRDB_LOAD_COLOR("color6", selcolor);
+        XRDB_LOAD_COLOR("color14", selcolor); /* bright aqua */
+        XRDB_LOAD_COLOR("color15", white);
       }
     }
   }

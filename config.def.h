@@ -15,6 +15,7 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[] = {
     "monospace:pixelsize=14:antialias=true:autohint=true",
 	"JoyPixels:pixelsize=14:antialias=true:autohint=true",
+	"UbuntuMono Nerd Font Proto:pixelsize=14:antialias=true:autohint=true", /* here specifically to match icons since the monospace is default to ubuntomono without any icons */
 };
 static const char dmenufont[]       = "monospace:size=10";
 static char black[]					= "#222222";
@@ -24,7 +25,7 @@ static char selcolor[]           	= "#005577";
 static char *colors[][3] = {
        /*               fg          bg          border   */
     [SchemeNorm] = 		{ white, 	black,  	gray },
-    [SchemeSel]  = 		{ white,  	selcolor,  	selcolor  },
+    [SchemeSel]  = 		{ black,  	selcolor,  	selcolor  },
 	[SchemeInactive] = 	{ white, 	gray, 		NULL },
 };
 static const unsigned int alphas[][3]      = {
@@ -109,7 +110,7 @@ static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen win
 static const Layout layouts[] = {
 	/* symbol   arrange function */
 	{ "",      tile },    /* first entry is default */
-	{ "",      NULL },    /* no layout function means floating behavior */
+	{ "󰖲",      NULL },    /* no layout function means floating behavior */
 	{ "",      monocle }, /* maximized layout (bar still visible) */
 	{ NULL,     NULL },  /* sentinel to allow for cycling through layouts */
 };
