@@ -49,7 +49,7 @@ static const Rule rules[] = {
 	{ "Anki",           NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Anki */
 	{ "Arandr",         NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Arandr */
 	{ "autorun.exe",    NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Wine */
-	{ "Barrier",        NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Barrier */
+	{ "Deskflow",        NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Barrier */
 	{ "Blueman",        NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Blueman */
 	{ "CfgDFInput",     NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* PCSXR */
 	{ "Conky",          NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Conky */
