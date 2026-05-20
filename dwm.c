@@ -677,7 +677,7 @@ cleanup(void)
 	for (i = 0; i < CurLast; i++)
 		drw_cur_free(drw, cursor[i]);
 	for (i = 0; i < LENGTH(colors); i++)
-		free(scheme[i]);
+		drw_scm_free(drw, scheme[i], 3);
 	XDestroyWindow(dpy, wmcheckwin);
 	drw_free(drw);
 	XSync(dpy, False);
@@ -3301,8 +3301,10 @@ xrdb(const Arg *arg)
 
   loadxrdb();
 
-  for (i = 0; i < LENGTH(colors); i++)
+  for (i = 0; i < LENGTH(colors); i++) {
+                drw_scm_free(drw, scheme[i], 3);
                 scheme[i] = drw_scm_create(drw, colors[i], alphas[i], 3);
+  }
 
   selmon = m;
   arrange(selmon);
