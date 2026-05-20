@@ -52,6 +52,54 @@ Verification:
 - `make`
 - Result: build passed.
 
+## Step 12: add hidden-bar guard to `drawbar`
+
+Status: completed
+
+Files changed:
+
+- `dwm.c`
+
+Current local behavior before this step:
+
+- `drawbar` always ran its drawing logic when called.
+- The function handled local bar features:
+  - systray width reservation
+  - status text shifted left of the systray
+  - monitor labels
+  - master-monitor-only tag labels
+  - inactive monitor color scheme
+  - layout symbol drawing
+
+Incoming upstream 6.8 behavior:
+
+- Returns early when `m->showbar` is false.
+- Also removes global `blw`, but that overlaps with local bar click behavior and
+  is deferred to the next bar/click step.
+
+Conflict decision:
+
+- Adopt only the hidden-bar guard in this step.
+- Preserve all local systray/mastermon/status rendering.
+- Keep `blw` for now to avoid mixing draw and click-area changes.
+
+Expected visible behavior:
+
+- Visible bars should look unchanged.
+- Hidden bars should skip unnecessary drawing work.
+- Systray, mastermon tags, monitor labels, and status text behavior should remain
+  unchanged.
+
+Actual code change:
+
+- Added `if (!m->showbar) return;` near the top of `drawbar`.
+
+Verification:
+
+- `make clean`
+- `make`
+- Result: build passed.
+
 ## Step 10: remove old `sigchld`
 
 Status: completed
