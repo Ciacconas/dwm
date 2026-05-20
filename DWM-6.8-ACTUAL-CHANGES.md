@@ -94,6 +94,53 @@ Verification:
 - Compared against upstream `6.8`.
 - No build required because no source code changed.
 
+## Step 8: add `Client.hintsvalid`
+
+Status: completed
+
+Files changed:
+
+- `dwm.c`
+
+Current local behavior before this step:
+
+- `Client` stored size-hint values such as base size, increments, min/max size,
+  and aspect limits.
+- Size hints were recalculated immediately in the event paths that noticed hint
+  changes.
+
+Incoming upstream 6.8 behavior:
+
+- Adds `hintsvalid` to `Client`.
+- Later upstream changes use this as a lazy invalidation flag:
+  - `propertynotify` marks hints invalid.
+  - `applysizehints` recalculates only when needed.
+  - `updatesizehints` marks hints valid again.
+
+Conflict decision:
+
+- Add upstream's `hintsvalid` field while preserving all local fields for
+  center, swallow, sticky, terminal detection, and PID tracking.
+
+Expected visible behavior:
+
+- No visible behavior change from this field alone.
+- This prepares for later size-hint behavior, which should reduce unnecessary
+  size-hint recalculation.
+
+Actual code change:
+
+- Changed the size-hint field line in `struct Client` from:
+  `basew, baseh, incw, inch, maxw, maxh, minw, minh`
+  to:
+  `basew, baseh, incw, inch, maxw, maxh, minw, minh, hintsvalid`.
+
+Verification:
+
+- `make clean`
+- `make`
+- Result: build passed.
+
 ## Step 6: move `LENGTH` to `util.h`
 
 Status: completed
