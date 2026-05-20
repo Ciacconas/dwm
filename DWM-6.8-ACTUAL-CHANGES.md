@@ -52,6 +52,48 @@ Verification:
 - `make`
 - Result: build passed.
 
+## Step 7: keep sticky-aware `ISVISIBLE`
+
+Status: completed
+
+Files changed:
+
+- `DWM-6.8-ACTUAL-CHANGES.md`
+
+Current local behavior:
+
+- `ISVISIBLE(C)` returns true when a client is on the selected tag or when the
+  client has `issticky` set.
+- This supports the local sticky-window feature bound to `MODKEY|ShiftMask +
+  XK_o`.
+
+Incoming upstream 6.8 behavior:
+
+- `ISVISIBLE(C)` only checks whether the client belongs to the selected tag.
+- Upstream has no sticky-window concept.
+
+Conflict decision:
+
+- Keep the local sticky-aware macro unchanged.
+- Do not adopt upstream's vanilla `ISVISIBLE`.
+
+Expected visible behavior:
+
+- No visible behavior change.
+- Sticky windows continue appearing on all tags.
+- If upstream's macro were used, sticky windows would stop working as expected.
+
+Actual code change:
+
+- No source code change required; current `dwm.c` already has the desired local
+  behavior.
+
+Verification:
+
+- Inspected `dwm.c`.
+- Compared against upstream `6.8`.
+- No build required because no source code changed.
+
 ## Step 6: move `LENGTH` to `util.h`
 
 Status: completed
