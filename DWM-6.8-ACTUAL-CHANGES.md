@@ -52,6 +52,47 @@ Verification:
 - `make`
 - Result: build passed.
 
+## Step 6: move `LENGTH` to `util.h`
+
+Status: completed
+
+Files changed:
+
+- `util.h`
+- `dwm.c`
+
+Current local behavior before this step:
+
+- `LENGTH(X)` was defined locally in `dwm.c`.
+- The macro was only available to files that defined it themselves.
+
+Incoming upstream 6.8 behavior:
+
+- Defines `LENGTH(X)` in `util.h` next to `MAX`, `MIN`, and `BETWEEN`.
+- Removes the local `dwm.c` definition.
+
+Conflict decision:
+
+- Adopt upstream's shared `util.h` definition.
+- Remove the duplicate macro from `dwm.c`.
+
+Expected visible behavior:
+
+- No visible or runtime behavior change.
+- This is a compile-time cleanup that prevents duplicate macro conflicts and
+  makes `LENGTH` available consistently to other source files.
+
+Actual code change:
+
+- Added `#define LENGTH(X) (sizeof (X) / sizeof (X)[0])` to `util.h`.
+- Removed `#define LENGTH(X) (sizeof X / sizeof X[0])` from `dwm.c`.
+
+Verification:
+
+- `make clean`
+- `make`
+- Result: build passed.
+
 ## Step 5: `utf8decode` and `drw_text`
 
 Status: completed
