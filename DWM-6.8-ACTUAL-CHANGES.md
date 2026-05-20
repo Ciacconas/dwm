@@ -122,6 +122,45 @@ Verification:
 - `make`
 - Result: build passed.
 
+## Step 5 follow-up: restore non-color emoji fallback
+
+Status: completed
+
+Files changed:
+
+- `drw.c`
+- `config.def.h`
+
+Observed regression:
+
+- After allowing color-font fallback, emoji and private-use symbols in the bar
+  rendered as rectangular boxes.
+- Fontconfig selects `JoyPixels` for emoji, and `JoyPixels` is a color font.
+- On this dwm/Xft/ARGB drawing path, that color font does not render usefully
+  even though the installed libXft is modern enough to avoid the old crash.
+
+Fix decision:
+
+- Keep the upstream 6.8 UTF-8 and text rendering improvements.
+- Restore filtering of color fonts in `xfont_create`.
+- Restore `FC_COLOR = FcFalse` during fallback font matching.
+- Do not restore the old Arch-specific `pacman -Q libxft | grep bgra` runtime
+  check.
+- Revert the partial interrupted `config.def.h` font-family edit so this fix
+  only addresses rendering behavior.
+
+Expected visible behavior:
+
+- Emoji/status icons should fall back to monochrome/symbol fonts again instead
+  of JoyPixels boxes.
+- 6.8 truncation, invalid UTF-8 handling, and missing-glyph caching remain.
+
+Verification:
+
+- `make clean`
+- `make`
+- Result: build passed.
+
 ## Step 4: `drw_clr_free` / `drw_scm_free`
 
 Status: completed
