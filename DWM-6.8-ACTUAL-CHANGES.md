@@ -92,6 +92,53 @@ Verification:
 - `rg -n 'sigchld|SIGCHLD|sigaction|signal\(' dwm.c`
 - Source contains `SIGCHLD` only in the new `sigaction` setup.
 
+## Step 11: reset child `SIGCHLD` handling in `spawn`
+
+Status: completed
+
+Files changed:
+
+- `dwm.c`
+
+Current local behavior before this step:
+
+- `spawn` updated `dmenumon` for dmenu.
+- The child closed the X connection, called `setsid`, and then called `execvp`.
+- If `execvp` failed, it printed with `fprintf`/`perror` and exited
+  successfully.
+
+Incoming upstream 6.8 behavior:
+
+- Declares a local `struct sigaction`.
+- In the child process, restores `SIGCHLD` handling to `SIG_DFL` before
+  `execvp`.
+- Uses `die` if `execvp` fails.
+
+Conflict decision:
+
+- Adopt upstream's child-side signal reset.
+- Preserve local `dmenumon` behavior.
+- Adopt upstream's `die` failure path.
+
+Expected visible behavior:
+
+- Normal launching should feel unchanged.
+- Programs spawned by dwm should not inherit dwm's ignored `SIGCHLD` behavior.
+- If a spawn command is invalid, the failure path exits as an error instead of a
+  successful child exit.
+
+Actual code change:
+
+- Added `struct sigaction sa` in `spawn`.
+- Restored child `SIGCHLD` handling to `SIG_DFL` after `setsid`.
+- Replaced `fprintf`/`perror`/`exit(EXIT_SUCCESS)` with upstream's `die` call.
+
+Verification:
+
+- `make clean`
+- `make`
+- Result: build passed.
+
 ## Step 9: update `setup` SIGCHLD handling
 
 Status: completed
