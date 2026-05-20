@@ -52,6 +52,54 @@ Verification:
 - `make`
 - Result: build passed.
 
+## Step 9: update `setup` SIGCHLD handling
+
+Status: completed
+
+Files changed:
+
+- `dwm.c`
+
+Current local behavior before this step:
+
+- `setup` called `sigchld(0)`.
+- `sigchld` installed itself as the `SIGCHLD` handler using `signal`.
+- The handler reaped exited children with `waitpid`.
+- `setup` also installed `SIGUSR1` for xrdb reload.
+
+Incoming upstream 6.8 behavior:
+
+- Uses `sigaction` for `SIGCHLD`.
+- Sets `SA_NOCLDWAIT` so children do not become zombies.
+- Performs one immediate `waitpid` cleanup for inherited zombies.
+- Removes the old `sigchld` function.
+
+Conflict decision:
+
+- Adopt upstream's safer `SIGCHLD` handling.
+- Keep the local `SIGUSR1 -> xrdb` behavior.
+- Leave child-side `spawn` signal reset for the next planned step.
+
+Expected visible behavior:
+
+- Normal spawning should feel unchanged.
+- Exited child processes should be handled with less signal-handler complexity.
+- `SIGUSR1` color reload should continue working.
+
+Actual code change:
+
+- Removed the `sigchld` prototype and function.
+- Added `struct sigaction sa` in `setup`.
+- Installed `SIGCHLD` handling with:
+  `SA_NOCLDSTOP | SA_NOCLDWAIT | SA_RESTART`.
+- Replaced `sigchld(0)` with upstream's immediate `waitpid` cleanup loop.
+
+Verification:
+
+- `make clean`
+- `make`
+- Result: build passed.
+
 ## Step 7: keep sticky-aware `ISVISIBLE`
 
 Status: completed
