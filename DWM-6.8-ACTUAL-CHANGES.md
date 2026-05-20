@@ -52,6 +52,46 @@ Verification:
 - `make`
 - Result: build passed.
 
+## Step 10: remove old `sigchld`
+
+Status: completed
+
+Files changed:
+
+- `DWM-6.8-ACTUAL-CHANGES.md`
+
+Current local behavior before step 9:
+
+- `sigchld` was a standalone signal handler.
+- It reinstalled itself with `signal(SIGCHLD, sigchld)`.
+- It reaped children with `waitpid`.
+
+Incoming upstream 6.8 behavior:
+
+- The standalone `sigchld` function no longer exists.
+- Child cleanup is handled by the `sigaction` setup in `setup`.
+
+Conflict decision:
+
+- The source change was already completed in step 9.
+- Keep `sigusr1` because it is local xrdb reload behavior.
+
+Expected visible behavior:
+
+- No additional behavior change beyond step 9.
+- Spawned child cleanup is handled through upstream's `sigaction` model.
+
+Actual code change:
+
+- No new source change in this step.
+- Verified there are no remaining `sigchld` declarations, definitions, or calls
+  in `dwm.c`.
+
+Verification:
+
+- `rg -n 'sigchld|SIGCHLD|sigaction|signal\(' dwm.c`
+- Source contains `SIGCHLD` only in the new `sigaction` setup.
+
 ## Step 9: update `setup` SIGCHLD handling
 
 Status: completed
