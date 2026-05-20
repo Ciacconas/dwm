@@ -52,6 +52,76 @@ Verification:
 - `make`
 - Result: build passed.
 
+## Step 5: `utf8decode` and `drw_text`
+
+Status: completed
+
+Files changed:
+
+- `drw.c`
+- `drw.h`
+
+Current local behavior before this step:
+
+- Text rendering used the older dwm 6.2 UTF-8 decoder.
+- Long text was shortened through a fixed local buffer.
+- Missing glyph lookup did not cache known misses.
+- Color-font fallback was blocked unless a runtime Arch-specific
+  `pacman -Q libxft | grep bgra` check passed.
+- Fallback font matching forced `FC_COLOR` to false.
+
+Incoming upstream 6.8 behavior:
+
+- Rewrites UTF-8 decoding with stricter invalid-sequence handling.
+- Reworks text overflow and ellipsis placement.
+- Adds invalid-glyph rendering behavior for bad UTF-8.
+- Caches known missing glyphs to avoid repeated expensive font matching.
+- Adds `drw_fontset_getwidth_clamp`.
+- Removes the old color-font workaround because libXft fixed it in 2.3.5.
+
+Conflict decision:
+
+- Adopt upstream's new `utf8decode`.
+- Adopt upstream's new `drw_text` behavior.
+- Preserve this fork's ARGB draw target by keeping:
+  `XftDrawCreate(drw->dpy, drw->drawable, drw->visual, drw->cmap)`.
+- Remove this fork's `has_libxft_bgra` runtime check because this system has
+  `libxft 2.3.9`, newer than the upstream fix threshold.
+- Remove forced `FC_COLOR = FcFalse` fallback matching so modern color glyphs can
+  be used by Xft/fontconfig.
+- Use an ASCII byte literal for the Unicode replacement character in source:
+  `"\357\277\275"`.
+
+Expected visible behavior:
+
+- Long window titles and status text should truncate with cleaner ellipsis
+  behavior.
+- Invalid UTF-8 in titles or status text should degrade more gracefully.
+- Missing glyphs should become cheaper after repeated encounters.
+- Color emoji/color glyph fallback is now allowed on this system's modern
+  libXft.
+- Existing alpha/transparent bar rendering should be unchanged.
+
+Actual code change:
+
+- Removed the old `UTF_SIZ`, `utfbyte`, `utfmask`, `utfmin`, `utfmax`,
+  `utf8decodebyte`, and `utf8validate` machinery.
+- Added upstream's newer `utf8decode`.
+- Removed the global `has_libxft_bgra`.
+- Removed the `pacman` runtime check from `drw_fontset_create`.
+- Removed the color-font rejection block from `xfont_create`.
+- Replaced `drw_text` with the upstream 6.8 renderer, adapted for this fork's
+  ARGB visual/colormap.
+- Added `drw_fontset_getwidth_clamp` declaration and implementation.
+
+Verification:
+
+- `pkg-config --modversion xft` reported `2.3.9`.
+- `pacman -Q libxft` reported `libxft 2.3.9-1`.
+- `make clean`
+- `make`
+- Result: build passed.
+
 ## Step 4: `drw_clr_free` / `drw_scm_free`
 
 Status: completed
