@@ -52,6 +52,62 @@ Verification:
 - `make`
 - Result: build passed.
 
+## Step 13: align bar click areas with drawn bar
+
+Status: completed
+
+Files changed:
+
+- `dwm.c`
+
+Current local behavior before this step:
+
+- `buttonpress` already used `TEXTW(selmon->ltsymbol)` for layout-symbol click
+  detection.
+- Status click detection used `TEXTW(stext)` directly and subtracted systray
+  width.
+- `drawbar` draws status text with `TEXTW(stext) - lrpad + 2`, so the clickable
+  status region was wider than the visible status text.
+- `blw` was still assigned in `drawbar`, but no longer read by click handling.
+
+Incoming upstream behavior:
+
+- Upstream 6.8 uses `TEXTW(selmon->ltsymbol)` instead of the old global `blw`.
+- Upstream master after 6.8 fixes status click mismatch by using the same width
+  expression as `drawbar`: `TEXTW(stext) - lrpad + 2`.
+
+Conflict decision:
+
+- Preserve local monitor-label, mastermon, systray, and clickable-status
+  behavior.
+- Compute `statusw` and `statusx` in `buttonpress` using the same width math as
+  `drawbar`.
+- Keep systray offset in the status click calculation.
+- Remove the now-unused `blw` global and assignments.
+
+Expected visible behavior:
+
+- Bar rendering should look unchanged.
+- Status widget clicks should line up more tightly with the drawn status text.
+- Empty title-bar space just left of the status text should be less likely to
+  trigger status actions.
+- Layout symbol clicks should continue working.
+
+Actual code change:
+
+- Added local `statusw`, `statusx`, and `stw` variables in `buttonpress`.
+- Matched status click start to:
+  `selmon->ww - (TEXTW(stext) - lrpad + 2) - stw`.
+- Passed `ev->x - statusx` to `clickstatus`.
+- Removed global `blw`.
+- Replaced `blw` assignments in `drawbar` with local `w` assignments.
+
+Verification:
+
+- `make clean`
+- `make`
+- Result: build passed.
+
 ## Step 12: add hidden-bar guard to `drawbar`
 
 Status: completed

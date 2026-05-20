@@ -327,7 +327,7 @@ static char stext[256];
 static int scanner;
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
-static int bh, blw = 0;      /* bar geometry */
+static int bh;               /* bar height */
 static int lrpad;            /* sum of left and right padding for text */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
@@ -584,6 +584,7 @@ void
 buttonpress(XEvent *e)
 {
 	unsigned int i, x, click;
+	int statusw, statusx, stw = 0;
 	Arg arg = {0};
 	Client *c;
 	Monitor *m;
@@ -598,36 +599,41 @@ buttonpress(XEvent *e)
 	}
 	if (ev->window == selmon->barwin) {
 		i = x = 0;
-        if (mons->next){
-            x += TEXTW(montags[m->num]);
-            if (ev->x < x){
-                if (ev->button == 1){
-                    makemastermon(selmon);
-                }
-                return;
-            }
-            x += TEXTW(" ");
-            if (ev->x < x)
-                return;
-        }
+		if (showsystray && selmon == systraytomon(selmon))
+			stw = getsystraywidth();
+		if (mons->next) {
+			x += TEXTW(montags[m->num]);
+			if (ev->x < x) {
+				if (ev->button == 1)
+					makemastermon(selmon);
+				return;
+			}
+			x += TEXTW(" ");
+			if (ev->x < x)
+				return;
+		}
 
-        if (selmon == mastermon){
-            do
-                x += TEXTW(tags[i]);
-            while (ev->x >= x && ++i < LENGTH(tags)-1);
-        }
+		if (selmon == mastermon) {
+			do
+				x += TEXTW(tags[i]);
+			while (ev->x >= x && ++i < LENGTH(tags)-1);
+		}
 
 		if ((i < LENGTH(tags)-1) && (selmon == mastermon)) {
 			click = ClkTagBar;
 			arg.ui = 1 << i;
-		} else if (ev->x < x + TEXTW(selmon->ltsymbol))
+		} else if (ev->x < x + TEXTW(selmon->ltsymbol)) {
 			click = ClkLtSymbol;
-		else if (ev->x > selmon->ww - (int)TEXTW(stext) - getsystraywidth()){
-			click = ClkStatusText;
-            clickstatus(stext, (ev->x - (selmon->ww - TEXTW(stext) - getsystraywidth())), ev->button);
-        }
-        else
-			click = ClkWinTitle;
+		} else {
+			statusw = TEXTW(stext) - lrpad + 2;
+			statusx = selmon->ww - statusw - stw;
+			if (ev->x > statusx) {
+				click = ClkStatusText;
+				clickstatus(stext, ev->x - statusx, ev->button);
+			} else {
+				click = ClkWinTitle;
+			}
+		}
 	} else if ((c = wintoclient(ev->window))) {
 		focus(c);
 		restack(selmon);
@@ -1030,7 +1036,7 @@ drawbar(Monitor *m)
 	x = 0;
 
     if (mons->next){
-        w = blw = TEXTW(montags[m->num]);
+        w = TEXTW(montags[m->num]);
         drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeInactive]);
         x = drw_text(drw, x, 0, w, bh, lrpad / 2, montags[m->num], 0);
         drw_setscheme(drw, scheme[SchemeNorm]);
@@ -1049,7 +1055,7 @@ drawbar(Monitor *m)
             x += w;
         }
     }
-	w = blw = TEXTW(m->ltsymbol);
+	w = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
 
