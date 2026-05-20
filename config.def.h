@@ -13,11 +13,11 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[] = {
-    "monospace:pixelsize=14:antialias=true:autohint=true",
-	"JoyPixels:pixelsize=14:antialias=true:autohint=true",
-	"UbuntuMono Nerd Font Proto:pixelsize=14:antialias=true:autohint=true", /* here specifically to match icons since the monospace is default to ubuntomono without any icons */
+    "monospace:pixelsize=24:antialias=true:autohint=true",
+	"JoyPixels:pixelsize=24:antialias=true:autohint=true",
+	"UbuntuMono Nerd Font Proto:pixelsize=24:antialias=true:autohint=true", /* here specifically to match icons since the monospace is default to ubuntomono without any icons */
 };
-static const char dmenufont[]       = "monospace:size=10";
+static const char dmenufont[]       = "monospace:size=24";
 static char black[]					= "#222222";
 static char gray[]					= "#777777";
 static char white[]					= "#ffffff";
@@ -49,7 +49,7 @@ static const Rule rules[] = {
 	{ "Anki",           NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Anki */
 	{ "Arandr",         NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Arandr */
 	{ "autorun.exe",    NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Wine */
-	{ "Deskflow",        NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Barrier */
+	{ "Deskflow",       NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Barrier */
 	{ "Blueman",        NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Blueman */
 	{ "CfgDFInput",     NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* PCSXR */
 	{ "Conky",          NULL,       NULL,         0,          1,         1,          0,          0,      -1 }, /* Conky */
@@ -80,6 +80,7 @@ static const Rule rules[] = {
 	{ NULL, "fdtd-solutions-app",   NULL,         0,          1,         1,          0,          0,      -1 }, /* Lumerical FDTD */
 	{ NULL, "mode-solutions-app",   NULL,         0,          1,         1,          0,          0,      -1 }, /* Lumerical MODE */
 
+	{ NULL, NULL, "File Operation Progress",      0,          1,         1,          0,          0,      -1 }, /* Thunar */
 	{ NULL, NULL, "Confirm Exit",                 0,          1,         1,          0,          0,      -1 }, /* PyCharm */
 	{ NULL, NULL, "Customize PyCharm",            0,          1,         1,          0,          0,      -1 }, /* PyCharm */
 	{ NULL, NULL, "Event Tester",                 0,          1,         1,          0,          1,      -1 }, /* xev */
