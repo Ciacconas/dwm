@@ -296,7 +296,7 @@ transparent in the alpha channel) to 255 (fully opaque):
 | Scheme | Foreground alpha | Background alpha | Border alpha |
 | --- | ---: | ---: | ---: |
 | `SchemeNorm` | 255 | 50 (about 20% opaque) | 255 |
-| `SchemeSel` | 255 | 50 (about 20% opaque) | 255 |
+| `SchemeSel` | 255 | 30 (about 12% opaque) | 255 |
 | `SchemeInactive` | 0 (implicit pixel alpha) | 0 (implicit) | 0 (unused) |
 
 `SchemeInactive` has no explicit row in the `alphas` array, so C sets
