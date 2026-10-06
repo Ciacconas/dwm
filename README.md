@@ -250,3 +250,58 @@ and (re)compiling the source code.
 ## Credits
 
 This `dwm` fork is based on the suckless upstream: [https://dwm.suckless.org/](https://dwm.suckless.org/)
+
+## Bar colors and transparency
+
+The bar colors are defined in `config.h` (with defaults in `config.def.h`).
+The values in the tables below are the tracked defaults in `config.def.h`;
+the local `config.h` may differ. There are four base color values:
+
+| Value | Default | Where it appears |
+| --- | --- | --- |
+| `black` | `#222222` | Normal bar background and selected text |
+| `gray` | `#777777` | Selected tags on an unfocused monitor and normal window borders |
+| `white` | `#ffffff` | Normal and inactive text |
+| `selcolor` | `#005577` | Selected tag and monitor highlights and focused window borders |
+
+At startup, dwm reads the X resource `color14` into `selcolor` and
+`color15` into `white`, if they contain valid `#RRGGBB` values. The
+other two colors use the values in `config.h`. Reload the Xresources
+colors in a running dwm with `xsetroot -name "fsignal:3"` or `SIGUSR1`.
+Editing colors in `config.h` requires rebuilding dwm.
+
+The four values are combined into three schemes. Each scheme has a
+foreground (text), background, and border color:
+
+| Scheme | Foreground | Background | Border | Main use |
+| --- | --- | --- | --- | --- |
+| `SchemeNorm` | `white` | `black` | `gray` | Unselected tags, layout symbol, status text, and unfocused borders |
+| `SchemeSel` | `black` | `selcolor` | `selcolor` | Selected tags on the focused monitor, its label, and focused borders |
+| `SchemeInactive` | `white` | `gray` | Unset | Selected tags and monitor label on an unfocused monitor |
+
+A tag containing a window gets a small occupancy square in its scheme's
+foreground color. That square alone does not mean the window requested
+attention. If a window on a tag is urgent, dwm swaps that tag's scheme
+foreground and background. For an unselected tag on the current monitor,
+this uses `SchemeNorm`: the whole tag background becomes `white` (the
+`color15` X resource, if set), and its text and occupancy square become
+`black`. This is the off-screen tag notification; it does not use
+`SchemeInactive` or the `gray` value. `SchemeInactive` applies when a
+selected tag is drawn on an unfocused monitor. With the `mastermon`
+patch, numbered tags appear only on the master monitor.
+
+Alpha is configured separately in `config.h`, on a scale from 0 (fully
+transparent in the alpha channel) to 255 (fully opaque):
+
+| Scheme | Foreground alpha | Background alpha | Border alpha |
+| --- | ---: | ---: | ---: |
+| `SchemeNorm` | 255 | 50 (about 20% opaque) | 255 |
+| `SchemeSel` | 255 | 50 (about 20% opaque) | 255 |
+| `SchemeInactive` | 0 (implicit pixel alpha) | 0 (implicit) | 0 (unused) |
+
+`SchemeInactive` has no explicit row in the `alphas` array, so C sets
+its entries to zero. Its border color is unset, so the border alpha is
+unused. dwm uses a 32-bit ARGB visual when one is available.
+A compositor such as picom displays the configured transparency. If dwm
+falls back to a visual without an alpha channel, these opacity settings
+cannot produce the intended transparency.

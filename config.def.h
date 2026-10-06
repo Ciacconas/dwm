@@ -31,7 +31,7 @@ static char *colors[][3] = {
 static const unsigned int alphas[][3]      = {
 	/*               fg    bg  border  */
 	[SchemeNorm] = { 255,  50,   255   },
-	[SchemeSel]  = { 255,  180, 255  },
+	[SchemeSel]  = { 255,  50, 255  },
 };
 
 /* tagging */
